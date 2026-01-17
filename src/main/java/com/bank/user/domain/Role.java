@@ -1,4 +1,6 @@
 package com.bank.user.domain;
 
-public class Role {
+public enum Role {
+    USER,
+    ADMIN
 }
