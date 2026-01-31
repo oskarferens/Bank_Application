@@ -49,7 +49,7 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
 
-     ///Checking if password didn't expired
+     ///Checking if password didn't expire
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
