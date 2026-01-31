@@ -1,4 +1,5 @@
 package com.bank.account.domain;
 
-public class IbanGenerator {
+public interface IbanGenerator {
+    String generate();
 }

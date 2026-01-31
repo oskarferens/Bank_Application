@@ -14,12 +14,10 @@ public class AccountOwnerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Foreign Key to accounts.id
+    @Column(nullable = false)
+    private Long userId;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "account_id")
     private AccountEntity account;
-
-    // Foreign Key to users.id (without JPA relation)
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
 }

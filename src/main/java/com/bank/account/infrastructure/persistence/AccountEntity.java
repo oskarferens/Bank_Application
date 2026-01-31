@@ -30,6 +30,10 @@ public class AccountEntity {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal dailyLimit;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AccountStatusJpa status;
+
     @OneToMany(
             mappedBy = "account",
             cascade = CascadeType.ALL,

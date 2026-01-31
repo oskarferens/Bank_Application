@@ -16,6 +16,7 @@ public class Account {
 
     private static final int MAX_OWNERS = 2;
 
+    // Domain constructor - creating a new account
     public Account(String iban, AccountOwner primaryOwner) {
         this.iban = iban;
         this.currency = AccountCurrency.SEK;
@@ -25,8 +26,24 @@ public class Account {
         this.owners.add(primaryOwner);
     }
 
-    // --- DOMAIN LOGIC ---
+    // Technical constructor - reconstruction from the database
+    public Account(
+            String iban,
+            AccountCurrency currency,
+            BigDecimal balance,
+            BigDecimal dailyLimit,
+            AccountStatus status,
+            Set<AccountOwner> owners
+    ) {
+        this.iban = iban;
+        this.currency = currency;
+        this.balance = balance;
+        this.dailyLimit = dailyLimit;
+        this.status = status;
+        this.owners.addAll(owners);
+    }
 
+    // DOMAIN LOGIC
     public void addOwner(AccountOwner owner) {
         if (owners.size() >= MAX_OWNERS) {
             throw new TooManyAccountOwnersException();
@@ -53,10 +70,17 @@ public class Account {
         }
     }
 
-    // --- GETTERS ---
-
+    //  GETTERS
     public String getIban() {
         return iban;
+    }
+
+    public AccountCurrency getCurrency() {
+        return currency;
+    }
+
+    public AccountStatus getStatus() {
+        return status;
     }
 
     public BigDecimal getBalance() {

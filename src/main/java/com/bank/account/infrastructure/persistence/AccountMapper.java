@@ -1,45 +1,70 @@
 package com.bank.account.infrastructure.persistence;
 
-import com.bank.account.domain.Account;
-import com.bank.account.domain.AccountOwner;
+import com.bank.account.domain.*;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AccountMapper {
+public final class AccountMapper {
 
+    private AccountMapper() {
+    }
+
+    // DOMAIN TO JPA
     public static AccountEntity toEntity(Account account) {
         AccountEntity entity = new AccountEntity();
         entity.setIban(account.getIban());
-        entity.setCurrency("SEK");
+        entity.setCurrency(account.getCurrency().name());
         entity.setBalance(account.getBalance());
         entity.setDailyLimit(account.dailyLimitSnapshot());
+        entity.setStatus(AccountStatusJpa.valueOf(account.getStatus().name()));
+
+        entity.setOwners(
+                account.getOwners().stream()
+                        .map(owner -> {
+                            AccountOwnerEntity ownerEntity = new AccountOwnerEntity();
+                            ownerEntity.setUserId(owner.getUserId());
+                            ownerEntity.setAccount(entity);
+                            return ownerEntity;
+                        })
+                        .collect(Collectors.toSet())
+        );
+
+        return entity;
+    }
+
+    public static AccountEntity updateEntity(AccountEntity entity, Account account) {
+
+        entity.setBalance(account.getBalance());
+        entity.setDailyLimit(account.dailyLimitSnapshot());
+        entity.setStatus(AccountStatusJpa.valueOf(account.getStatus().name()));
+
+        entity.getOwners().clear();
 
         account.getOwners().forEach(owner -> {
             AccountOwnerEntity ownerEntity = new AccountOwnerEntity();
-            ownerEntity.setAccount(entity);
             ownerEntity.setUserId(owner.getUserId());
+            ownerEntity.setAccount(entity);
             entity.getOwners().add(ownerEntity);
         });
 
         return entity;
     }
 
+
+    // JPA TO DOMAIN
     public static Account toDomain(AccountEntity entity) {
-        var owners = entity.getOwners().stream()
+        Set<AccountOwner> owners = entity.getOwners().stream()
                 .map(o -> new AccountOwner(o.getUserId()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
-        Account account = new Account(
+        return new Account(
                 entity.getIban(),
-                owners.get(0)
+                AccountCurrency.valueOf(entity.getCurrency()),
+                entity.getBalance(),
+                entity.getDailyLimit(),
+                AccountStatus.valueOf(entity.getStatus().name()),
+                owners
         );
-
-        owners.stream()
-                .skip(1)
-                .forEach(account::addOwner);
-
-        account.deposit(entity.getBalance());
-
-        return account;
     }
 }
