@@ -35,7 +35,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account addSecondOwner(String iban, Long secondOwnerUserId) {
         Account account = accountRepository.findByIban(iban)
-                .orElseThrow(() -> new IllegalStateException("Account not found"));
+                .orElseThrow(() -> new AccountException("Account not found"));
+
 
         account.addOwner(new AccountOwner(secondOwnerUserId));
 
@@ -45,7 +46,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account deposit(String iban, BigDecimal amount) {
         Account account = accountRepository.findByIban(iban)
-                .orElseThrow(() -> new IllegalStateException("Account not found"));
+                .orElseThrow(() -> new AccountException("Account not found"));
+
 
         account.deposit(amount);
 
