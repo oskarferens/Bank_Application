@@ -22,39 +22,40 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-     /// Main configuration of Spring Security
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                /// REST API - CSRF turn off
+                // REST API
                 .csrf(csrf -> csrf.disable())
 
-                /// JWT - no session
+                // JWT = STATELESS
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                /// Endpoint authorization
+                // MOST IMPORTANT
                 .authorizeHttpRequests(auth -> auth
+                        // AUTH
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .anyRequest().authenticated()
+                        // DEBUG
+                        // Access is granted based solely on JWT (no role checks)
+                        // MUST BE HERE OTHERWISE SECURITY THROWS 403.
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().denyAll()
                 )
-
-                /// JWT filter before Spring login
+                // JWT FILTER
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-     /// Password Encoder - BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-     /// AuthenticationManager necessary for logging in
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config
