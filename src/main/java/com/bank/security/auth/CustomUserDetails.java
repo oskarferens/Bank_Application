@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-/// Adapter between our entity and Spring Security
+/// Adapter between entity and Spring Security
 public class CustomUserDetails implements UserDetails {
 
     private final User user;

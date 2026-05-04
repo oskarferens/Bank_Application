@@ -4,6 +4,7 @@ import com.bank.account.application.AccountService;
 import com.bank.account.domain.Account;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -35,5 +36,14 @@ public class AccountController {
     @GetMapping
     public List<Account> getAccountsForUser(@RequestParam Long userId) {
         return accountService.getAccountsForUser(userId);
+    }
+
+    // PUT MONEY ON THE ACCOUNT
+    @PostMapping("/deposit")
+    public Account deposit(
+            @RequestParam String iban,
+            @RequestParam BigDecimal amount
+    ) {
+        return accountService.deposit(iban, amount);
     }
 }

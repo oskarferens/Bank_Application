@@ -15,9 +15,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    /**
-     * User logging and generating JWT
-     */
+    // User logging and generating JWT
     public String login(String login, String password) {
 
         try {

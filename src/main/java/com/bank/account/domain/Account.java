@@ -16,7 +16,7 @@ public class Account {
 
     private static final int MAX_OWNERS = 2;
 
-    // Domain constructor - creating a new account
+
     public Account(String iban, AccountOwner primaryOwner) {
         this.iban = iban;
         this.currency = AccountCurrency.SEK;
